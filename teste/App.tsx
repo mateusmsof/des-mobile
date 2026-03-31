@@ -1,13 +1,12 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View } from 'react-native';
 
-// 1. Importe o seu componente (ajuste o caminho se necessário)
-import Carteira from './components/carteira'; 
+import { Carteira } from './components/carteira'; 
 
 export default function App() {
   return (
     <View style={styles.container}>
-      {/* 2. Coloque o componente aqui no lugar do <Text> antigo */}
+
       <Carteira />
       
       <StatusBar style="auto" />

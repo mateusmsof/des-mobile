@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, Image } from 'react-native';
 import { styles } from './styles'; // Importando o arquivo de estilo
 
-export default function IdentityCard() {
+export function Carteira() {
   return (
     <View style={styles.container}>
       
