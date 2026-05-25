@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
+import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import Display from './components/Display';
 import Tecla from './components/Tecla';
@@ -135,14 +136,24 @@ export default function App() {
                 <Tecla label="AC" onPress={limpar} style={[styles.tecla, styles.teclaLimpar]} />
                 <Tecla label="(" onAdicionar={adicionarElemento} style={[styles.tecla, styles.teclaOperador]} />
                 <Tecla label=")" onAdicionar={adicionarElemento} style={[styles.tecla, styles.teclaOperador]} />
-                <Tecla label="/" onAdicionar={adicionarElemento} style={[styles.tecla, styles.teclaOperador]} />
+                <Tecla
+                  label="/"
+                  icon={<MaterialCommunityIcons name="division" size={28} color="#fff" />}
+                  onAdicionar={adicionarElemento}
+                  style={[styles.tecla, styles.teclaOperador]}
+                />
               </View>
 
               <View style={styles.linhaTeclas}>
                 <Tecla label="7" onAdicionar={adicionarElemento} style={styles.tecla} />
                 <Tecla label="8" onAdicionar={adicionarElemento} style={styles.tecla} />
                 <Tecla label="9" onAdicionar={adicionarElemento} style={styles.tecla} />
-                <Tecla label="*" onAdicionar={adicionarElemento} style={[styles.tecla, styles.teclaOperador]} />
+                <Tecla
+                  label="*"
+                  icon={<MaterialIcons name="close" size={28} color="#fff" />}
+                  onAdicionar={adicionarElemento}
+                  style={[styles.tecla, styles.teclaOperador]}
+                />
               </View>
 
               <View style={styles.linhaTeclas}>
@@ -161,8 +172,13 @@ export default function App() {
 
               <View style={styles.linhaTeclas}>
                 <Tecla label="0" onAdicionar={adicionarElemento} style={styles.tecla} />
-                <Tecla label="." onAdicionar={adicionarElemento} style={styles.tecla} />
-                <Tecla label="DEL" onPress={excluirUltimoElemento} style={styles.tecla} />
+                <Tecla label="." displayLabel="," onAdicionar={adicionarElemento} style={styles.tecla} />
+                <Tecla
+                  label="DEL"
+                  icon={<MaterialIcons name="backspace" size={28} color="#fff" />}
+                  onPress={excluirUltimoElemento}
+                  style={styles.tecla}
+                />
                 <Tecla label="=" onPress={calcular} style={[styles.tecla, styles.teclaCalcular]} />
               </View>
             </View>
@@ -180,7 +196,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: '#111827',
+    backgroundColor: '#172031',
     paddingHorizontal: 20,
     paddingBottom: 20,
     justifyContent: 'flex-start',

@@ -1,7 +1,10 @@
-import { StyleSheet, Text, TouchableHighlight } from 'react-native';
+import { StyleSheet, Text, TouchableHighlight, View } from 'react-native';
+import type { ReactNode } from 'react';
 
 type TeclaProps = {
   label: string;
+  displayLabel?: string;
+  icon?: ReactNode;
   onAdicionar?: (valor: string) => void;
   onPress?: () => void;
   style?: object;
@@ -10,6 +13,8 @@ type TeclaProps = {
 
 export default function Tecla({
   label,
+  displayLabel,
+  icon,
   onAdicionar,
   onPress,
   style,
@@ -28,7 +33,11 @@ export default function Tecla({
 
   return (
     <TouchableHighlight style={[styles.botao, style]} onPress={handlePress} underlayColor="#1d4ed8">
-      <Text style={[styles.texto, textStyle]}>{label}</Text>
+      {icon ? (
+        <View style={styles.conteudoIcone}>{icon}</View>
+      ) : (
+        <Text style={[styles.texto, textStyle]}>{displayLabel ?? label}</Text>
+      )}
     </TouchableHighlight>
   );
 }
@@ -41,6 +50,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 16,
+  },
+  conteudoIcone: {
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   texto: {
     color: '#ffffff',

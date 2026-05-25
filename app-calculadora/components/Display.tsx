@@ -22,6 +22,18 @@ const formatarNumeroParaExibicao = (valor: string) => {
   return ehNegativo ? `-${numeroFormatado}` : numeroFormatado;
 };
 
+const transformarOperadorParaExibicao = (operador: string) => {
+  if (operador === '*') {
+    return '×';
+  }
+
+  if (operador === '/') {
+    return '÷';
+  }
+
+  return operador;
+};
+
 const formatarExpressaoParaExibicao = (tokens: string[]) => {
   const tokensFormatados: string[] = [];
   let numeroAtual = '';
@@ -42,7 +54,7 @@ const formatarExpressaoParaExibicao = (tokens: string[]) => {
     }
 
     flushNumber();
-    tokensFormatados.push(token);
+    tokensFormatados.push(transformarOperadorParaExibicao(token));
   }
 
   flushNumber();
@@ -95,6 +107,7 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     marginBottom: 16,
     overflow: 'hidden',
+    marginTop: 16,
     justifyContent: 'space-between',
   },
   expressaoContainer: {
