@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "teste",
-    "slug": "teste",
+    "name": "app-formulario-stack",
+    "slug": "app-formulario-stack",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
