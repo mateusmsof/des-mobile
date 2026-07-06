@@ -1,0 +1,100 @@
+// --- Usuários e Perfis ---
+Table tb_users {
+  id int [pk, increment]
+  external_id uuid [unique, not null]
+  email varchar(255) [unique, not null]
+  status varchar(20) [default: 'active']
+  created_at datetime [default: `utc_timestamp()`]
+}
+
+Table tb_otps {
+  id int [pk, increment]
+  email varchar(255)
+  otp_code varchar(10)
+  is_used boolean [default: false]
+  expires_at datetime
+  created_at datetime [default: `utc_timestamp()`]
+}
+
+Table tb_stores {
+  id int [pk, increment]
+  external_id uuid [unique, not null]
+  user_id int [ref: - tb_users.id]
+  trade_name varchar(255)
+}
+
+Table tb_customers {
+  id int [pk, increment]
+  external_id uuid [unique, not null]
+  user_id int [ref: - tb_users.id]
+  display_name varchar(100)
+}
+
+// --- Mecânica de Fidelidade ---
+Table tb_rewards {
+  id int [pk, increment]
+  external_id uuid [unique, not null]
+  store_id int [ref: > tb_stores.id]
+  title varchar(255)
+  description text
+}
+
+Table tb_loyalty_card_templates {
+  id int [pk, increment]
+  external_id uuid [unique, not null]
+  store_id int [ref: > tb_stores.id]
+  title varchar(255)
+  max_stamps int
+  status varchar(20) [default: 'draft'] // 'draft', 'published', 'archived'
+  created_at datetime [default: `utc_timestamp()`]
+}
+
+Table tb_loyalty_card_template_rewards {
+  id int [pk, increment]
+  loyalty_card_template_id int [ref: > tb_loyalty_card_templates.id]
+  reward_id int [ref: > tb_rewards.id]
+}
+
+Table tb_loyalty_cards {
+  id int [pk, increment]
+  external_id uuid [unique, not null]
+  customer_id int [ref: > tb_customers.id]
+  template_id int [ref: > tb_loyalty_card_templates.id]
+  selected_reward_id int [ref: > tb_rewards.id, null]
+  status varchar(20) [default: 'active']
+  completed_at datetime [null]
+  created_at datetime [default: `utc_timestamp()`]
+}
+
+// --- Mochila e Selos ---
+Table tb_stamp_packs {
+  id int [pk, increment]
+  external_id uuid [unique, not null]
+  loyalty_card_id int [ref: > tb_loyalty_cards.id]
+  status varchar(20) [default: 'sealed']
+  created_at datetime [default: `utc_timestamp()`]
+}
+
+// --- Vouchers ---
+Table tb_vouchers {
+  id int [pk, increment]
+  external_id uuid [unique, not null]
+  voucher_code char(6) [unique]
+  type varchar(20)
+  status varchar(20) [default: 'pending']
+  store_id int [ref: > tb_stores.id]
+  customer_id int [ref: > tb_customers.id, null]
+  expires_at datetime
+  created_at datetime [default: `utc_timestamp()`]
+}
+
+Table tb_voucher_stamps {
+  voucher_id int [ref: - tb_vouchers.id]
+  stamp_count int
+}
+
+Table tb_voucher_rewards {
+  voucher_id int [ref: - tb_vouchers.id]
+  reward_id int [ref: > tb_rewards.id]
+  loyalty_card_id int [ref: > tb_loyalty_cards.id]
+}
