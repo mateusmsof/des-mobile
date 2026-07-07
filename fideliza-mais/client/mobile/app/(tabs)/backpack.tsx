@@ -1,38 +1,77 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, StatusBar, Dimensions, ViewStyle, TextStyle } from 'react-native';
 import { useRouter } from 'expo-router';
 
-// Exemplo de dados retornados pelo GET /stamp-packs
-const PACKS = [
+// Interface estruturada conforme o modelo da tabela tb_stamp_packs
+interface StampPackGroup {
+  id: string;
+  storeName: string;
+  count: number;
+}
+
+// Dados fictícios simulando o agrupamento por estabelecimento
+const PACKS: StampPackGroup[] = [
   { id: '1', storeName: 'Pausa & Sabor', count: 3 },
   { id: '2', storeName: 'Panificadora Japão', count: 1 },
+  { id: '3', storeName: 'Burguer House', count: 5 },
+  { id: '4', storeName: 'Café Central', count: 2 },
 ];
+
+// Cálculo para garantir que os cards fiquem simétricos independente do tamanho da tela
+const SCREEN_WIDTH = Dimensions.get('window').width;
+const CARD_MARGIN = 10;
+const CARD_WIDTH = (SCREEN_WIDTH - 40 - (CARD_MARGIN * 2)) / 2;
 
 export default function BackpackScreen() {
   const router = useRouter();
 
   return (
     <View style={styles.container}>
-      <Text style={styles.pageTitle}>Minha Mochila</Text>
+      <StatusBar barStyle="dark-content" backgroundColor="#F2F4F7" />
+      
+      {/* CABEÇALHO CONTEXTUALIZADO */}
+      <View style={styles.headerGroup}>
+        <Text style={styles.pageTitle}>Minha Mochila</Text>
+        <Text style={styles.subtitle}>Inventário de pacotes selados de selos</Text>
+      </View>
       
       <FlatList
         data={PACKS}
+        numColumns={2} // Transforma a lista em uma grade/grid estilo inventário de jogo
         contentContainerStyle={styles.listContent}
+        columnWrapperStyle={styles.columnWrapper}
         keyExtractor={(item) => item.id}
+        showsVerticalScrollIndicator={false}
+        ListEmptyComponent={
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyTitle}>Mochila vazia</Text>
+            <Text style={styles.emptyText}>Visite lojas parceiras e acumule pacotes fechados aqui.</Text>
+          </View>
+        }
         renderItem={({ item }) => (
           <TouchableOpacity 
-            style={styles.packItem} 
-            // Ajustado para navegar usando o id para a rota dinâmica
+            style={styles.packCard} 
+            activeOpacity={0.8}
             onPress={() => router.push(`/packs/${item.id}`)}
           >
-            <View style={styles.storeIcon} />
-            <View style={styles.infoContainer}>
-              <Text style={styles.storeNameText}>{item.storeName}</Text>
-              <Text style={styles.packCountText}>{item.count} pacotes selados</Text>
+            {/* ÁREA VISUAL CENTRALIZADA DO CARD */}
+            <View style={styles.cardVisual}>
+              <View style={styles.itemIconWrapper}>
+                {/* Letra ou ícone do item do jogo/plataforma */}
+                <Text style={styles.iconLetter}>{item.storeName.charAt(0).toUpperCase()}</Text>
+              </View>
             </View>
-            <View style={styles.badge}>
-              <Text style={styles.badgeText}>{item.count}</Text>
+
+            {/* INFORMAÇÕES DO ESTABELECIMENTO */}
+            <View style={styles.cardInfo}>
+              <Text style={styles.storeNameText} numberOfLines={1}>{item.storeName}</Text>
             </View>
+
+            {/* BADGE DE QUANTIDADE ESTILO ITEM COLECIONÁVEL */}
+            <View style={styles.qtyBadge}>
+              <Text style={styles.qtyText}>x{item.count}</Text>
+            </View>
+
           </TouchableOpacity>
         )}
       />
@@ -40,70 +79,154 @@ export default function BackpackScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+// Tipagem explícita dos objetos para evitar inferências incorretas de CSS Web/Mobile no TS
+interface Styles {
+  container: ViewStyle;
+  headerGroup: ViewStyle;
+  pageTitle: TextStyle;
+  subtitle: TextStyle;
+  listContent: ViewStyle;
+  columnWrapper: ViewStyle;
+  packCard: ViewStyle;
+  cardVisual: ViewStyle;
+  itemIconWrapper: ViewStyle;
+  iconLetter: TextStyle;
+  cardInfo: ViewStyle;
+  storeNameText: TextStyle;
+  qtyBadge: ViewStyle;
+  qtyText: TextStyle;
+  emptyContainer: ViewStyle;
+  emptyTitle: TextStyle;
+  emptyText: TextStyle;
+}
+
+const styles = StyleSheet.create<Styles>({
   container: { 
     flex: 1, 
-    backgroundColor: '#F2F4F7', 
-    padding: 20 
+    backgroundColor: '#F2F4F7' 
+  },
+  headerGroup: {
+    paddingHorizontal: 20,
+    paddingTop: 24,
+    paddingBottom: 16,
   },
   pageTitle: { 
-    fontSize: 24, 
+    fontSize: 26, 
     fontWeight: '700', 
     color: '#333C48', 
-    marginBottom: 20, 
-    marginTop: 40, 
     fontFamily: 'Poppins-Bold' 
+  },
+  subtitle: {
+    fontSize: 13,
+    color: '#717d8a',
+    fontFamily: 'Poppins-Regular',
+    marginTop: 2
   },
   listContent: { 
-    paddingBottom: 20 
+    paddingHorizontal: 20,
+    paddingBottom: 24 
   },
-  packItem: { 
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    backgroundColor: '#FFF', 
-    padding: 16, 
-    borderRadius: 12, 
-    marginBottom: 12,
-    shadowColor: '#000', 
-    shadowOffset: { width: 0, height: 2 }, 
-    shadowOpacity: 0.05, 
-    shadowRadius: 4, 
+  columnWrapper: {
+    justifyContent: 'flex-start',
+    gap: CARD_MARGIN * 2
+  },
+  /* CARD EM FORMATO DE GRADE DE INVENTÁRIO */
+  packCard: { 
+    backgroundColor: '#FFFFFF', 
+    width: CARD_WIDTH,
+    height: CARD_WIDTH * 1.15,
+    borderRadius: 14, 
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: '#C7D0D8',
+    padding: 12,
+    alignItems: 'center',
+    justifyContent: 'space-between', // Corrigido de 'between' para 'space-between'
+    position: 'relative',
+    shadowColor: '#333C48', 
+    shadowOffset: { width: 0, height: 4 }, 
+    shadowOpacity: 0.03, 
+    shadowRadius: 6, 
     elevation: 2
   },
-  storeIcon: { 
-    width: 48, 
-    height: 48, 
-    backgroundColor: '#E1E4E8', 
-    borderRadius: 8, 
-    marginRight: 16 
+  cardVisual: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
   },
-  infoContainer: { 
-    flex: 1 
+  itemIconWrapper: { 
+    width: 64, 
+    height: 64, 
+    backgroundColor: 'rgba(34, 124, 157, 0.08)', 
+    borderRadius: 12, 
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(34, 124, 157, 0.15)'
+  },
+  iconLetter: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#227C9D',
+    fontFamily: 'Poppins-Bold'
+  },
+  cardInfo: { 
+    width: '100%',
+    alignItems: 'center',
+    paddingTop: 8,
+    borderTopWidth: 1,
+    borderTopColor: '#F2F4F7'
   },
   storeNameText: { 
-    fontSize: 16, 
+    fontSize: 14, 
     fontWeight: '700', 
     color: '#333C48', 
-    fontFamily: 'Poppins-Bold' 
+    fontFamily: 'Poppins-Bold',
+    textAlign: 'center'
   },
-  packCountText: { 
-    fontSize: 12, 
-    color: '#333C48', 
-    opacity: 0.6, 
-    fontFamily: 'Poppins-Regular' 
+  /* BADGE DE QUANTIDADE DO INVENTÁRIO */
+  qtyBadge: { 
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    backgroundColor: '#FFD000',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#FFFFFF',
+    shadowColor: '#333C48',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 1
   },
-  badge: { 
-    backgroundColor: '#FFD000', 
-    width: 32, 
-    height: 32, 
-    borderRadius: 16, 
-    justifyContent: 'center', 
-    alignItems: 'center' 
-  },
-  badgeText: { 
+  qtyText: { 
     fontWeight: '700', 
     color: '#333C48', 
-    fontSize: 12, 
+    fontSize: 11, 
     fontFamily: 'Poppins-Bold' 
+  },
+  emptyContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 40,
+    marginTop: 80
+  },
+  emptyTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#333C48',
+    fontFamily: 'Poppins-Bold',
+    marginBottom: 8
+  },
+  emptyText: {
+    fontSize: 14,
+    color: '#a0aab2',
+    textAlign: 'center',
+    fontFamily: 'Poppins-Regular',
+    lineHeight: 20
   }
 });

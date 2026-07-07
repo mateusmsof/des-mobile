@@ -1,0 +1,48 @@
+/* Contêiner pai que segura a aplicação inteira */
+.app-layout-container {
+  display: flex;
+  
+  /* 🌟 ATUALIZADO: dVW e dVH impedem o layout de quebrar com as barras do navegador mobile */
+  width: 100dvw;
+  width: 100vw; 
+  height: 100dvh; 
+  height: 100vh; 
+  
+  background-color: var(--color-surface-bg, #F8F9FA);
+  overflow: hidden; /* Impede scrolls nesta camada global do layout */
+}
+
+/* O conteúdo principal se adapta dinamicamente à largura da Sidebar */
+.app-main-content {
+  flex: 1;
+  min-width: 0;
+  height: 100%; /* Ocupa exatamente a altura disponível */
+  
+  /* No desktop, se o conteúdo da página ativa (Outlet) crescer, o scroll acontece aqui dentro */
+  overflow-y: auto; 
+  overflow-x: hidden; 
+  
+  /* Margem esquerda padrão equivalente à largura da sua Sidebar expandida (280px) */
+  margin-left: 280px; 
+  transition: margin-left 0.24s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Se você estiver usando a classe de colapsado na Sidebar, ajustamos a margem do conteúdo */
+:has(.sidebar--collapsed) .app-main-content {
+  margin-left: 78px;
+}
+
+/* ==========================================================================
+   RESPONSIVIDADE ADAPTÁVEL MOBILE (< 1024px)
+   ========================================================================== */
+@media (max-width: 1023px) {
+  .app-main-content {
+    margin-left: 0 !important;
+    padding: var(--space-md, 16px);
+    
+    /* 🌟 O PULO DO GATO: Desativa o scroll desta camada no mobile! 
+       Isso passa a responsabilidade do scroll 100% para a sua AnalysisPage,
+       eliminando o "duplo scroll" e travando o efeito mola de vez. */
+    overflow: hidden !important; 
+  }
+}

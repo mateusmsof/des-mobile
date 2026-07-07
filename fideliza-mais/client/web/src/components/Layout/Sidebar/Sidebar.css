@@ -1,0 +1,177 @@
+/* ==========================================================================
+   ESTILO SIDEBAR - FIDELIZA MAIS (Design System v2026)
+   ========================================================================== */
+
+:root {
+  --sidebar-w-expanded: 280px;
+  --sidebar-w-collapsed: 78px;
+  --sb-transition-smooth: 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar {
+  position: fixed;
+  top: 0; left: 0;
+  width: var(--sidebar-w-expanded);
+  height: 100dvh;
+  background-color: #FFFFFF; /* Fundo branco conforme DS */
+  border-right: 1px solid #C7D0D8; /* Neutro definido no DS */
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+  transition: width var(--sb-transition-smooth);
+}
+
+/* Gatilho de Colapsamento Lateral */
+.sidebar-collapse-trigger {
+  position: absolute;
+  top: 43px;
+  right: -14px;
+  width: 28px;
+  height: 28px;
+  background-color: #FFFFFF;
+  border: 1px solid #C7D0D8;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 1010;
+  color: #333C48;
+  transition: transform var(--sb-transition-smooth);
+}
+
+.sidebar-collapse-trigger:hover {
+  background-color: #F2F4F7;
+  color: #227C9D;
+}
+
+.sidebar-header {
+  padding: 40px var(--space-md, 16px);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  overflow: hidden;
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #227C9D; /* Primária DS */
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.brand-name {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #333C48; /* Texto DS */
+  margin: 0;
+  transition: opacity var(--sb-transition-smooth);
+}
+
+.sidebar-body {
+  flex: 1;
+  padding: 0 16px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 24px;
+}
+
+.sidebar-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 8px; /* Arredondamento DS */
+  color: #333C48;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.sidebar-nav-item:hover {
+  background-color: #F2F4F7;
+}
+
+.sidebar-nav-item--active {
+  background-color: #E1E4E8;
+}
+
+.nav-text {
+  transition: opacity var(--sb-transition-smooth);
+}
+
+.sidebar-footer {
+  padding: 24px 16px;
+  border-top: 1px solid #C7D0D8;
+  overflow: hidden;
+}
+
+.sidebar-btn-logout {
+  width: 100%;
+  padding: 12px;
+  background: transparent;
+  border: 1px solid #C7D0D8;
+  border-radius: 8px;
+  color: #333C48;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* Overlay para Mobile */
+.sidebar-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 999;
+}
+
+/* Estados de Colapsamento */
+.sidebar--collapsed { 
+  width: var(--sidebar-w-collapsed); 
+}
+
+.sidebar--collapsed .brand-name, 
+.sidebar--collapsed .nav-text { 
+  opacity: 0;
+  pointer-events: none;
+  width: 0;
+  display: none;
+}
+
+.sidebar--collapsed .sidebar-btn-logout {
+  justify-content: center;
+  padding: 12px 0;
+}
+
+/* Responsividade Mobile */
+@media (max-width: 1023px) {
+  .sidebar {
+    left: calc(-1 * var(--sidebar-w-expanded));
+  }
+  .sidebar--open {
+    left: 0;
+  }
+  .sidebar-collapse-trigger {
+    right: -40px;
+    top: 20px;
+  }
+}

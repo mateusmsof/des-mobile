@@ -1,0 +1,249 @@
+/* ==========================================================================
+   DASHBOARD DE TEMPLATES DE CARTÃO - FIDELIZA+ (Design System v2026)
+   ========================================================================== */
+
+.dashboard-container {
+  padding: 40px;
+  background-color: #F2F4F7;
+  min-height: 100vh;
+  font-family: 'Poppins', sans-serif;
+  color: #333C48;
+}
+
+/* Cabeçalho */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.dashboard-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dashboard-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin: 0;
+  color: #333C48;
+}
+
+.dashboard-subtitle {
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: #a0aab2;
+  margin: 0;
+}
+
+/* Botão Primário Novo Template */
+.btn-primary {
+  background-color: #227C9D;
+  color: #FFFFFF;
+  padding: 12px 24px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+}
+
+/* Grade de Cards */
+.campaigns-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 24px;
+  margin-top: 16px;
+}
+
+/* Card Clean com Miniatura Flexível */
+.campaign-card {
+  background-color: #FFFFFF;
+  border: 1px solid #C7D0D8;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 190px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.campaign-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(51, 60, 72, 0.06);
+}
+
+/* Distribuição do Bloco do Conteúdo Superior */
+.card-content-wrapper {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+/* Miniatura da Campanha (Suporta Imagem ou Placeholder) */
+.card-thumbnail {
+  width: 64px;
+  height: 64px;
+  border-radius: 8px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.card-thumbnail-placeholder {
+  width: 64px;
+  height: 64px;
+  border-radius: 8px;
+  background-color: rgba(34, 124, 157, 0.1);
+  color: #227C9D;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Bloco Textual Interno */
+.card-text-block {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.card-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.4;
+  color: #333C48;
+}
+
+/* Badge de Status Reorganizado Abaixo do Título */
+.status-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.status-badge {
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-badge--published {
+  background-color: rgba(34, 124, 157, 0.12);
+  color: #227C9D;
+}
+
+.status-badge--draft {
+  background-color: #F2F4F7;
+  color: #333C48;
+  border: 1px solid #C7D0D8;
+}
+
+.status-badge--archived {
+  background-color: #E1E4E8;
+  color: #717d8a;
+}
+
+/* Metas de Selos */
+.detail-stamps {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.8rem;
+  color: #717d8a;
+  font-weight: 500;
+}
+
+/* Rodapé Separado e Alinhado */
+.card-footer {
+  border-top: 1px solid #F2F4F7;
+  padding-top: 14px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Botões de Ação Redondos/Quadrados Padronizados */
+.btn-action-icon {
+  background: transparent;
+  border: 1px solid #C7D0D8;
+  color: #333C48;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-action-icon:hover {
+  background-color: #F2F4F7;
+  border-color: #333C48;
+}
+
+/* Variação de cor para botão destrutivo (Deletar) */
+.btn-action-icon--delete:hover {
+  background-color: #FFF2F2;
+  border-color: #D93838;
+  color: #D93838;
+}
+
+/* Botão de Publicação Direta */
+.btn-publish-action {
+  background-color: #227C9D;
+  color: #FFFFFF;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.8rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: opacity 0.2s ease;
+}
+
+.btn-publish-action:hover {
+  opacity: 0.9;
+}
+
+/* Empty State */
+.empty-state {
+  background-color: #FFFFFF;
+  border: 2px dashed #C7D0D8;
+  border-radius: 12px;
+  padding: 60px;
+  text-align: center;
+  max-width: 480px;
+  margin: 60px auto 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.empty-icon {
+  font-size: 3rem;
+  color: #C7D0D8;
+}

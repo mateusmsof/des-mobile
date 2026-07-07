@@ -1,0 +1,102 @@
+/* ==========================================================================
+   RESET & ESTRUTURA BASE
+   ========================================================================== */
+
+/* Força todas as tags a calcularem largura/altura incluindo paddings e bordas */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* 🌟 ATUALIZADO: Incluído o #root para garantir que o container do React também trave */
+body, html, #root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  
+  /* 🌟 O SEGREDO 1: Usa Dynamic Viewport Height para se adaptar perfeitamente com ou sem barras do navegador */
+  height: 100dvh; 
+  height: 100vh; /* Fallback de segurança para navegadores antigos */
+  
+  background-color: var(--color-surface-bg);
+  
+  /* 🌟 O SEGREDO 2: Trava o scroll global em AMBOS os eixos. 
+     Nenhum elemento pai vai esticar ou balançar. O scroll só vai acontecer nos containers internos (como o seu chat) */
+  overflow: hidden; 
+
+  /* ------------------------------------------------------------------------
+     COMPORTAMENTO DE APP NATIVO TRAVADO
+     ------------------------------------------------------------------------ */
+  
+  /* Impede a seleção de texto acidental no app inteiro por padrão */
+  -webkit-user-select: none;  /* Safari/iOS */
+  -moz-user-select: none;     /* Firefox */
+  -ms-user-select: none;      /* IE/Edge antigos */
+  user-select: none;          /* Padrão (Chrome, Opera, Edge modernos) */
+
+  /* Desativa o flash cinza nativo que aparece ao clicar em botões/links no mobile */
+  -webkit-tap-highlight-color: transparent;
+
+  /* Evita comportamento elástico de "puxar para atualizar" e o efeito mola (rubber-band) vertical e horizontal */
+  overscroll-behavior: none; 
+}
+
+/* ==========================================================================
+   TOKENS DE DESIGN SYSTEM (LEICLARA)
+   ========================================================================== */
+:root {
+  /* Cores Semânticas LeiClara */
+  --color-brand-primary: #1A2E40;
+  --color-brand-secondary: #00A896;
+  --color-surface-bg: #F8F9FA;
+  --color-surface-card: #FFFFFF;
+  --color-text-main: #2D3748;
+  --color-feedback-danger: #D32F2F;
+  --color-feedback-warning: #ED6C02;
+
+  /* Escala de Espaçamento Rígida baseada em 8px */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+
+  /* Escala Tipográfica de Alta Legibilidade */
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1.00rem;
+  --font-size-md: 1.25rem;
+
+  /* Superfícies */
+  --border-radius-sm: 6px;
+  --border-radius-md: 10px;
+  --border-radius-lg: 16px;
+}
+
+/* ==========================================================================
+   CLASSES UTILITÁRIAS DE SELEÇÃO (GERENCIAMENTO DE EXCEÇÕES)
+   ========================================================================== */
+
+/* Coloque esta classe em qualquer bloco, container ou parágrafo onde o 
+   usuário PRECISA conseguir selecionar e copiar o texto (Ex: balão de chat da IA) */
+.allow-select {
+  -webkit-user-select: text !important;
+  -moz-user-select: text !important;
+  -ms-user-select: text !important;
+  user-select: text !important;
+}
+
+/* Caso precise herdar um comportamento restrito ou travar um elemento específico */
+.prevent-select {
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  user-select: none !important;
+}
+
+/* Garante que campos nativos de digitação NUNCA sejam bloqueados por engano */
+input, textarea, [contenteditable="true"] {
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
+}
