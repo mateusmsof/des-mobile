@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Modal, FlatList } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Modal, FlatList, Pressable } from 'react-native';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
 
 const REWARDS = [
     { id: '1', name: '1 Cappuccino Gourmet' },
@@ -9,6 +10,7 @@ const REWARDS = [
 
 export default function CardDetailScreen() {
     const [modalVisible, setModalVisible] = useState(false);
+    const [qrModalVisible, setQrModalVisible] = useState(false);
     const [selectedReward, setSelectedReward] = useState<{ name: string } | null>(null);
 
     return (
@@ -46,8 +48,9 @@ export default function CardDetailScreen() {
                 <Text style={styles.validText}>VÁLIDO ATÉ</Text>
                 <Text style={styles.dateText}>06/07/2027</Text>
 
-                <TouchableOpacity style={styles.validateButton}>
-                    <Text style={styles.buttonText}>+ VALIDAR NOVO SELO</Text>
+                <TouchableOpacity style={styles.validateButton} onPress={() => setQrModalVisible(true)}>
+                    <FontAwesome name="qrcode" size={18} color="#FFF" style={{ marginRight: 8 }} />
+                    <Text style={styles.buttonText}>VALIDAR NOVO SELO</Text>
                 </TouchableOpacity>
 
                 <Text style={styles.disclaimer}>
@@ -79,6 +82,28 @@ export default function CardDetailScreen() {
                         </TouchableOpacity>
                     </View>
                 </View>
+            </Modal>
+
+            {/* QR Code Modal */}
+            <Modal
+              visible={qrModalVisible}
+              transparent={true}
+              animationType="fade"
+              onRequestClose={() => setQrModalVisible(false)}>
+              <Pressable
+                style={styles.qrModalOverlay}
+                onPress={() => setQrModalVisible(false)}>
+                <View style={styles.qrModalContent}>
+                  <Pressable onPress={() => {}} style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                    <FontAwesome name="qrcode" size={120} color="#227C9D" />
+                  </Pressable>
+                  <Pressable
+                    style={styles.qrCloseButton}
+                    onPress={() => setQrModalVisible(false)}>
+                    <FontAwesome name="close" size={24} color="#fff" />
+                  </Pressable>
+                </View>
+              </Pressable>
             </Modal>
         </ScrollView>
     );
@@ -115,7 +140,7 @@ const styles = StyleSheet.create({
     divider: { width: '100%', height: 1, backgroundColor: '#F2F4F7', marginBottom: 20 },
     validText: { fontSize: 10, color: '#333C48', fontFamily: 'Poppins-Regular' },
     dateText: { fontSize: 14, fontWeight: '700', color: '#333C48', marginBottom: 24, fontFamily: 'Poppins-Bold' },
-    validateButton: { backgroundColor: '#227C9D', paddingVertical: 14, paddingHorizontal: 40, borderRadius: 8, marginBottom: 20 },
+    validateButton: { backgroundColor: '#227C9D', paddingVertical: 14, paddingHorizontal: 40, borderRadius: 8, marginBottom: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' },
     buttonText: { color: '#FFF', fontWeight: '700', fontFamily: 'Poppins-Bold' },
     disclaimer: { fontSize: 10, color: '#333C48', textAlign: 'center', opacity: 0.6, fontFamily: 'Poppins-Regular', lineHeight: 14 },
     modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', padding: 20 },
@@ -126,4 +151,7 @@ const styles = StyleSheet.create({
     rewardGridItem: { width: '48%', padding: 10, backgroundColor: '#F9F9F9', borderRadius: 8, alignItems: 'center', borderWidth: 1, borderColor: '#E1E4E8' },
     rewardImageThumb: { width: 60, height: 60, backgroundColor: '#C7D0D8', borderRadius: 8, marginBottom: 8 },
     rewardOptionText: { fontSize: 12, textAlign: 'center', fontFamily: 'Poppins-Regular', color: '#333C48' },
+    qrModalOverlay: { flex: 1, backgroundColor: 'rgba(0, 0, 0, 0.7)', justifyContent: 'center', alignItems: 'center' },
+    qrModalContent: { flex: 1, justifyContent: 'center', alignItems: 'center', width: '100%' },
+    qrCloseButton: { position: 'absolute', top: 50, right: 20, width: 50, height: 50, borderRadius: 25, backgroundColor: 'rgba(0, 0, 0, 0.5)', justifyContent: 'center', alignItems: 'center' },
 });

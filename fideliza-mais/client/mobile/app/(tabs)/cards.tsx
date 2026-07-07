@@ -25,6 +25,42 @@ export default function MyCardsScreen() {
       current: 5, 
       total: 6,
       imageUrl: null // Cenário sem imagem (usa o fallback elegante)
+    },
+       { 
+      id: '3', 
+      title: 'Combo Burguer Clássico', 
+      store: 'Pausa & Sabor', 
+      exp: '31/12/2026', 
+      current: 3, 
+      total: 8,
+      imageUrl: 'https://unsplash.com'
+    },
+    { 
+      id: '4', 
+      title: 'Milkshake de Ovomaltine', 
+      store: 'Estação do Doce', 
+      exp: '15/11/2026', 
+      current: 5, 
+      total: 6,
+      imageUrl: null // Cenário sem imagem (usa o fallback elegante)
+    },
+       { 
+      id: '5', 
+      title: 'Combo Burguer Clássico', 
+      store: 'Pausa & Sabor', 
+      exp: '31/12/2026', 
+      current: 3, 
+      total: 8,
+      imageUrl: 'https://unsplash.com'
+    },
+    { 
+      id: '6', 
+      title: 'Milkshake de Ovomaltine', 
+      store: 'Estação do Doce', 
+      exp: '15/11/2026', 
+      current: 5, 
+      total: 6,
+      imageUrl: null // Cenário sem imagem (usa o fallback elegante)
     }
   ];
 
@@ -32,11 +68,6 @@ export default function MyCardsScreen() {
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#F2F4F7" />
       
-      <View style={styles.headerGroup}>
-        <Text style={styles.header}>Meus Cartões</Text>
-        <Text style={styles.subtitle}>Acompanhe seus selos e resgate suas recompensas</Text>
-      </View>
-
       <FlatList 
         data={cards}
         keyExtractor={(item) => item.id}
@@ -67,28 +98,12 @@ export default function MyCardsScreen() {
 const styles = StyleSheet.create({
   container: { 
     flex: 1, 
-    backgroundColor: '#F2F4F7' 
-  },
-  headerGroup: {
-    paddingHorizontal: 20,
-    paddingTop: 24,
-    paddingBottom: 16,
-  },
-  header: { 
-    fontSize: 26, 
-    fontWeight: '700', 
-    color: '#333C48', 
-    fontFamily: 'Poppins-Bold' 
-  },
-  subtitle: {
-    fontSize: 13,
-    color: '#717d8a',
-    fontFamily: 'Poppins-Regular',
-    marginTop: 2
+    backgroundColor: '#F2F4F7', 
   },
   listContent: {
     paddingHorizontal: 20,
-    paddingBottom: 24
+    paddingBottom: 24,
+    paddingTop: 20,
   },
   emptyContainer: {
     alignItems: 'center',
