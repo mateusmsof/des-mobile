@@ -2,19 +2,18 @@ import React, { useEffect, useRef } from 'react';
 import { GLView, ExpoWebGLRenderingContext } from 'expo-gl';
 import * as THREE from 'three';
 
-// Corrigido: Interface adicionada e exportada explicitamente para zerar o erro do TypeScript
 export interface Pack3DProps {
-  rotationX: number;
-  rotationY: number;
+  isAnimatingOpen: boolean;
 }
 
-export default function Pack3D({ rotationX, rotationY }: Pack3DProps) {
-  // Referências para atualizar a rotação sem remontar o contexto do GLView
-  const rotationRef = useRef({ x: 0, y: 0 });
+export default function Pack3D({ isAnimatingOpen }: Pack3DProps) {
+  // Referência persistente compartilhada com o loop do Three.js
+  const animationStateRef = useRef({ active: false, speed: 0.6 });
 
   useEffect(() => {
-    rotationRef.current = { x: rotationX, y: rotationY };
-  }, [rotationX, rotationY]);
+    // Sincroniza o estado de disparo da animação vindo do botão da tela principal
+    animationStateRef.current.active = isAnimatingOpen;
+  }, [isAnimatingOpen]);
 
   const onContextCreate = async (gl: ExpoWebGLRenderingContext) => {
     const { drawingBufferWidth: width, drawingBufferHeight: height } = gl;
@@ -41,9 +40,10 @@ export default function Pack3D({ rotationX, rotationY }: Pack3DProps) {
     fillLight.position.set(-2, -3, 2);
     scene.add(fillLight);
 
-    // --- GEOMETRIA DO PACOTE ---
-    const w = 1.9;
-    const h = 2.9;
+    // --- GEOMETRIA DO PACOTE REDUZIDA PROPORCIONALMENTE ---
+    // Reduzido para evitar vazamento das bordas na renderização da tela do dispositivo
+    const w = 1.5; // Antes era 1.9
+    const h = 2.3; // Antes era 2.9
     const segments = 120;
     
     const geometry = new THREE.PlaneGeometry(w, h, segments, segments);
@@ -60,7 +60,8 @@ export default function Pack3D({ rotationX, rotationY }: Pack3DProps) {
         let z = 0;
         
         if (Math.abs(normalizeY) < sealArea) {
-            z = 0.28 * Math.cos(normalizeX * Math.PI / 2) * Math.cos((normalizeY / sealArea) * Math.PI / 2);
+            // Ajustado o multiplicador de estufamento para acompanhar o tamanho menor (0.24)
+            z = 0.24 * Math.cos(normalizeX * Math.PI / 2) * Math.cos((normalizeY / sealArea) * Math.PI / 2);
             z += (Math.sin(x * 8 + y * 4) * 0.01 + Math.cos(x * 4 - y * 8) * 0.005);
         } else {
             z = 0.018 * Math.sin(y * 120);
@@ -69,9 +70,9 @@ export default function Pack3D({ rotationX, rotationY }: Pack3DProps) {
     }
     geometry.computeVertexNormals();
 
-    // --- MATERIAL ALINHADO AO DESIGN SYSTEM ---
+    // --- MATERIAL DO DESIGN SYSTEM ---
     const packMaterial = new THREE.MeshPhysicalMaterial({ 
-        color: '#227C9D', // Verde-Azulado Oficial da paleta Primária
+        color: '#227C9D', // Verde-Azulado Oficial
         metalness: 0.1,
         roughness: 0.15, 
         clearcoat: 1.0,   
@@ -88,18 +89,26 @@ export default function Pack3D({ rotationX, rotationY }: Pack3DProps) {
     snackPack.add(back);
     scene.add(snackPack);
 
-    // --- LOOP DE ANIMAÇÃO ---
+    // --- LOOP DE ANIMAÇÃO SEM TRAVAMENTOS ---
     const animate = () => {
       requestAnimationFrame(animate);
-      
       const time = Date.now() * 0.001;
 
-      // Interpolação suave entre a rotação do arrasto (Gesto) + efeito ocioso (Idle)
-      snackPack.rotation.y = rotationRef.current.y + (Math.sin(time * 0.4) * 0.05);
-      snackPack.rotation.x = rotationRef.current.x + (Math.cos(time * 0.3) * 0.03);
-      
-      // Flutuação sutil de respiro
-      snackPack.position.y = Math.sin(time * 0.8) * 0.03;
+      if (animationStateRef.current.active) {
+        // Se clicou em abrir, acelera drasticamente a rotação Y criando efeito de redemoinho/giroscópio
+        animationStateRef.current.speed += 0.18;
+        snackPack.rotation.y += animationStateRef.current.speed;
+        
+        // Efeito de trepidação pesada nas outras direções simulando fricção de abertura
+        snackPack.rotation.x = Math.sin(time * 60) * 0.15;
+        snackPack.rotation.z = Math.cos(time * 50) * 0.1;
+      } else {
+        // Estado ocioso estável (Idle Automático Inteligente)
+        snackPack.rotation.y = Math.sin(time * 0.5) * 0.25;
+        snackPack.rotation.x = Math.cos(time * 0.3) * 0.04;
+        snackPack.rotation.z = Math.sin(time * 0.2) * 0.02;
+        snackPack.position.y = Math.sin(time * 0.8) * 0.03;
+      }
 
       renderer.render(scene, camera);
       gl.endFrameEXP();
