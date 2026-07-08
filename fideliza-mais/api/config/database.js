@@ -10,7 +10,10 @@ const dbconn = mysql.createPool({
     user: process.env.MYSQL_USER || 'root',
     password: process.env.MYSQL_PASSWORD || '',
     database: process.env.MYSQL_DB || 'fideliza_mais',
-    multipleStatements: true
+    multipleStatements: true,
+    // garante que a conexão use utf8mb4 (suporta emojis e acentuação correta)
+    // mysql2 espera o nome do charset (ex: 'utf8mb4'), não a collation
+    charset: 'utf8mb4'
 });
 
 /**
@@ -18,6 +21,8 @@ const dbconn = mysql.createPool({
  */
 const initDb = async () => {
     try {
+        // força charset na sessão e testa a conexão
+        await dbconn.query("SET NAMES utf8mb4; SET SESSION collation_connection = 'utf8mb4_unicode_ci';");
         await dbconn.query('SELECT 1');
         console.log('Pool de conexões pronto e banco acessível!');
     } catch (err) {

@@ -1,5 +1,5 @@
-const AppError = require('../common/AppError');
-const db = require('../config/database');
+const AppError = require('../../common/AppError');
+const db = require('../../config/database');
 
 const generateOTP = () => {
   return Math.floor(100000 + Math.random() * 900000).toString();

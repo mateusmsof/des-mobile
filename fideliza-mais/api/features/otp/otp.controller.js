@@ -1,4 +1,4 @@
-const catchAsync = require('../common/catchAsync');
+const catchAsync = require('../../common/catchAsync');
 const otpService = require('./otp.service');
 
 /**

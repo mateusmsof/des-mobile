@@ -13,7 +13,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use('/api', routes);
 
-app.all('*', (req, res, next) => {
+app.use((req, res, next) => {
   next(new AppError(`Rota ${req.originalUrl} não encontrada.`, 404));
 });
 
@@ -32,7 +32,7 @@ app.use((err, req, res, next) => {
   res.status(statusCode).json(payload);
 });
 
-const port = process.env.PORT || 3333;
+const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`API de fideliza-mais rodando em http://localhost:${port}`);
 });

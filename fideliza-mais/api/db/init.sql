@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS tb_users (
   external_id CHAR(36) NOT NULL UNIQUE,
   email VARCHAR(255) NOT NULL UNIQUE,
   status VARCHAR(20) NOT NULL DEFAULT 'active',
-  created_at DATETIME NOT NULL DEFAULT UTC_TIMESTAMP()
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS tb_otps (
@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS tb_otps (
   otp_code VARCHAR(10) NOT NULL,
   is_used BOOLEAN NOT NULL DEFAULT FALSE,
   expires_at DATETIME NOT NULL,
-  created_at DATETIME NOT NULL DEFAULT UTC_TIMESTAMP(),
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   INDEX idx_email_code (email, otp_code)
 );
 
@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS tb_loyalty_card_templates (
   title VARCHAR(255) NOT NULL,
   max_stamps INT NOT NULL,
   status VARCHAR(20) NOT NULL DEFAULT 'draft',
-  created_at DATETIME NOT NULL DEFAULT UTC_TIMESTAMP(),
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (store_id) REFERENCES tb_stores(id) ON DELETE CASCADE
 );
 
@@ -71,7 +71,7 @@ CREATE TABLE IF NOT EXISTS tb_loyalty_cards (
   selected_reward_id INT DEFAULT NULL,
   status VARCHAR(20) NOT NULL DEFAULT 'active',
   completed_at DATETIME DEFAULT NULL,
-  created_at DATETIME NOT NULL DEFAULT UTC_TIMESTAMP(),
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (customer_id) REFERENCES tb_customers(id) ON DELETE CASCADE,
   FOREIGN KEY (template_id) REFERENCES tb_loyalty_card_templates(id) ON DELETE CASCADE,
   FOREIGN KEY (selected_reward_id) REFERENCES tb_rewards(id) ON DELETE SET NULL
@@ -82,7 +82,7 @@ CREATE TABLE IF NOT EXISTS tb_loyalty_card_stamps (
   external_id CHAR(36) NOT NULL UNIQUE,
   loyalty_card_id INT NOT NULL,
   stamp_number INT NOT NULL,
-  created_at DATETIME NOT NULL DEFAULT UTC_TIMESTAMP(),
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (loyalty_card_id) REFERENCES tb_loyalty_cards(id) ON DELETE CASCADE,
   UNIQUE KEY uniq_card_stamp (loyalty_card_id, stamp_number)
 );
@@ -92,7 +92,7 @@ CREATE TABLE IF NOT EXISTS tb_stamp_packs (
   external_id CHAR(36) NOT NULL UNIQUE,
   loyalty_card_id INT NOT NULL,
   status VARCHAR(20) NOT NULL DEFAULT 'sealed',
-  created_at DATETIME NOT NULL DEFAULT UTC_TIMESTAMP(),
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (loyalty_card_id) REFERENCES tb_loyalty_cards(id) ON DELETE CASCADE
 );
 
@@ -104,7 +104,7 @@ CREATE TABLE IF NOT EXISTS tb_modals (
   body TEXT NOT NULL,
   type VARCHAR(50) NOT NULL,
   is_active BOOLEAN NOT NULL DEFAULT TRUE,
-  created_at DATETIME NOT NULL DEFAULT UTC_TIMESTAMP(),
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (store_id) REFERENCES tb_stores(id) ON DELETE SET NULL
 );
 
@@ -117,7 +117,7 @@ CREATE TABLE IF NOT EXISTS tb_vouchers (
   store_id INT NOT NULL,
   customer_id INT DEFAULT NULL,
   expires_at DATETIME NOT NULL,
-  created_at DATETIME NOT NULL DEFAULT UTC_TIMESTAMP(),
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (store_id) REFERENCES tb_stores(id) ON DELETE CASCADE,
   FOREIGN KEY (customer_id) REFERENCES tb_customers(id) ON DELETE SET NULL
 );

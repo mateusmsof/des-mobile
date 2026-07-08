@@ -1,5 +1,14 @@
 const db = require('../../config/database');
 
+const fixEncoding = (val) => {
+  if (val === null || val === undefined) return val;
+  try {
+    return Buffer.from(val, 'binary').toString('utf8');
+  } catch (e) {
+    return val;
+  }
+};
+
 exports.listCardsByCustomer = async (customerId) => {
   const [rows] = await db.query(`
     SELECT
@@ -10,11 +19,11 @@ exports.listCardsByCustomer = async (customerId) => {
       DATE_ADD(lc.created_at, INTERVAL 365 DAY) AS expires_at,
       lc.selected_reward_id,
       tpl.id AS template_id,
-      tpl.title AS template_title,
+      CONVERT(CONVERT(tpl.title USING latin1) USING utf8mb4) AS template_title,
       tpl.max_stamps AS max_stamps,
       str.id AS store_id,
-      str.trade_name AS store_name,
-      COALESCE(rw.title, NULL) AS selected_reward_title,
+      CONVERT(CONVERT(str.trade_name USING latin1) USING utf8mb4) AS store_name,
+      COALESCE(CONVERT(CONVERT(rw.title USING latin1) USING utf8mb4), NULL) AS selected_reward_title,
       COUNT(st.id) AS filled_stamps
     FROM tb_loyalty_cards lc
     JOIN tb_loyalty_card_templates tpl ON tpl.id = lc.template_id
@@ -34,14 +43,14 @@ exports.listCardsByCustomer = async (customerId) => {
     expiresAt: row.expires_at,
     store: {
       id: row.store_id,
-      name: row.store_name,
+      name: fixEncoding(row.store_name),
     },
-    title: row.template_title,
+    title: fixEncoding(row.template_title),
     maxStamps: row.max_stamps,
     currentStamps: Number(row.filled_stamps),
     selectedReward: row.selected_reward_title ? {
       id: row.selected_reward_id,
-      title: row.selected_reward_title,
+      title: fixEncoding(row.selected_reward_title),
     } : null,
   }));
 };
@@ -92,18 +101,18 @@ exports.getCardDetail = async (customerId, cardId) => {
     expiresAt: row.expires_at,
     store: {
       id: row.store_id,
-      name: row.store_name,
+      name: fixEncoding(row.store_name),
     },
-    title: row.template_title,
+    title: fixEncoding(row.template_title),
     maxStamps: row.max_stamps,
     currentStamps: Number(row.filled_stamps),
     selectedReward: row.selected_reward_title ? {
       id: row.selected_reward_id,
-      title: row.selected_reward_title,
+      title: fixEncoding(row.selected_reward_title),
     } : null,
     availableRewards: rewardRows.map((reward) => ({
       id: reward.id,
-      title: reward.title,
+      title: fixEncoding(reward.title && String(reward.title)),
     })),
   };
 };
