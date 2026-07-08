@@ -8,7 +8,7 @@ export default function CampaignDashboard() {
     {
       id: 1,
       external_id: 'a8b1c2d3-e4f5-6a7b-8c9d-0e1f2a3b4c5d',
-      title: 'Cartão Fidelidade: Combo Burguer Clássico',
+      title: 'Combo Burguer Clássico',
       max_stamps: 10,
       status: 'published', // 'published', 'draft', 'archived'
       image_url: null

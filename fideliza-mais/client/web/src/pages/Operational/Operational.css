@@ -1,0 +1,209 @@
+/* CONTAINER PRINCIPAL OPERACIONAL */
+.op-gerar-pontos-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100dvh - 120px); 
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+  background-color: #f8fafc;
+  position: relative;
+}
+
+/* BOTÃO ADMINISTRATIVO (TOPO ESQUERDO) */
+.op-btn-admin-top {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background-color: #ffffff;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.op-btn-admin-top:hover {
+  background-color: #f1f5f9;
+  color: #1e293b;
+}
+
+/* ESTRUTURA DO FORMULÁRIO */
+.op-form-gerar-selos {
+  width: 100%;
+  max-width: 340px;
+  background: white;
+  padding: 24px;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.op-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.op-form-group label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #475569;
+}
+
+.op-input-valor {
+  width: 100%;
+  padding: 14px;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+}
+
+.op-input-valor:focus {
+  border-color: #FFD000;
+}
+
+.op-btn-submit-emissao {
+  width: 100%;
+  background-color: #FFD000;
+  color: #1e293b;
+  font-weight: 700;
+  padding: 16px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 1rem;
+  box-shadow: 0 4px 0 #d9b100;
+  transition: transform 0.1s;
+}
+
+.op-btn-submit-emissao:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 #d9b100;
+}
+
+/* ESTRUTURA E LAYOUT DO MODAL */
+.op-modal-wrapper {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(2px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.op-code-display-overlay {
+    background-color: #FFFFFF;
+    padding: 24px;
+    border-radius: 16px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    width: 90%;
+    max-width: 340px;
+    text-align: center;
+    position: relative;
+}
+
+.op-close-btn {
+    position: absolute;
+    top: 15px; right: 15px;
+    font-size: 20px;
+    border: none;
+    background: #f1f5f9;
+    color: #64748b;
+    border-radius: 50%;
+    width: 30px; height: 30px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s;
+}
+
+.op-close-btn:hover { background: #e2e8f0; }
+
+.op-code-display-overlay h3 {
+    font-size: 1.2rem;
+    color: #1e293b;
+    margin-top: 10px;
+    margin-bottom: 4px;
+}
+
+.op-points-badge {
+    font-size: 0.9rem;
+    color: #64748b;
+    margin-bottom: 20px;
+}
+
+.op-qr-code-area {
+    background-color: #f8fafc;
+    border: 1px solid #f1f5f9;
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.op-canvas-element {
+    max-width: 100% !important;
+    height: auto !important;
+}
+
+.op-manual-code {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: 4px;
+    color: #1e293b;
+    background-color: #f8fafc;
+    padding: 16px;
+    border-radius: 12px;
+    border: 2px solid #e2e8f0;
+    margin-top: 10px;
+    text-transform: uppercase;
+}
+
+.op-btn-modal-continue {
+    width: 100%;
+    background-color: #FFD000;
+    color: #1e293b;
+    font-weight: 700;
+    padding: 16px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 1rem;
+    margin-top: 24px;
+    box-shadow: 0 4px 0 #d9b100;
+    transition: all 0.1s;
+}
+
+.op-btn-modal-continue:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #d9b100;
+}
+
+/* RESPONSIVIDADE MOBILE */
+@media (max-width: 600px) {
+  .op-gerar-pontos-container {
+    min-height: calc(100dvh - 100px);
+    padding-bottom: 80px; 
+  }
+  .op-btn-admin-top {
+    top: 12px;
+    left: 12px;
+  }
+}
