@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { Link, Tabs } from 'expo-router';
-import { Pressable, View, StyleSheet, Modal } from 'react-native';
+import { Tabs } from 'expo-router';
+import { Pressable, View, StyleSheet } from 'react-native';
 
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { useClientOnlyValue } from '@/components/useClientOnlyValue';
+import ValidarSelo from '../../components/ui/ValidarSelo';
 
 const PRIMARY_COLOR = '#227C9D';
 
-// You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>['name'];
   color: string;
@@ -26,8 +26,6 @@ export default function TabLayout() {
       <Tabs
         screenOptions={{
           tabBarActiveTintColor: PRIMARY_COLOR,
-          // Disable the static render of the header on web
-          // to prevent a hydration error in React Navigation v6.
           headerShown: useClientOnlyValue(false, true),
           tabBarStyle: {
             backgroundColor: Colors[colorScheme ?? 'light'].background,
@@ -66,27 +64,12 @@ export default function TabLayout() {
         </Pressable>
       </View>
 
-      {/* QR Code Modal */}
-      <Modal
-        visible={modalVisible}
-        transparent={true}
-        animationType="fade"
-        onRequestClose={() => setModalVisible(false)}>
-        <Pressable
-          style={styles.modalOverlay}
-          onPress={() => setModalVisible(false)}>
-          <View style={styles.modalContent}>
-            <Pressable onPress={() => {}} style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-              <FontAwesome name="qrcode" size={120} color={PRIMARY_COLOR} />
-            </Pressable>
-            <Pressable
-              style={styles.closeButton}
-              onPress={() => setModalVisible(false)}>
-              <FontAwesome name="close" size={24} color="#fff" />
-            </Pressable>
-          </View>
-        </Pressable>
-      </Modal>
+      {/* Chamada do Modal customizado importado */}
+      <ValidarSelo 
+        visible={modalVisible} 
+        onClose={() => setModalVisible(false)} 
+        primaryColor={PRIMARY_COLOR}
+      />
     </>
   );
 }
@@ -110,28 +93,5 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 8,
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalContent: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '100%',
-  },
-  closeButton: {
-    position: 'absolute',
-    top: 50,
-    right: 20,
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
   },
 });

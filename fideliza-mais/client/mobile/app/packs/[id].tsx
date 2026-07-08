@@ -20,7 +20,6 @@ export default function OpenPackScreen() {
         const runHapticsLoop = async () => {
             while (isRunning) {
                 try {
-                    // Ajustado para Heavy para aumentar o ronco do motor durante a aceleração
                     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
                 } catch (e) {
                     console.warn("Haptics não suportado:", e);
@@ -40,41 +39,40 @@ export default function OpenPackScreen() {
 
         // --- ESTOURO FINAL IMPACTANTE (MÁXIMA INTENSIDADE) ---
         try {
-            // Primeiro impacto pesado do estouro
             await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
             await new Promise(resolve => setTimeout(resolve, 80));
-            
-            // Segundo impacto consecutivo para criar a assinatura de "explosão" física
             await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-            
-            // Notificação clássica de sucesso encadeada
             await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         } catch (error) {
-            // Garantia Absoluta Nativa se o Expo falhar: Pulso longo e firme de 300ms
             Vibration.vibrate(300);
         }
 
         try {
             // Simulação assíncrona da rota da API para computar o selo no banco
-            // await api.post(`/stamp-packs/${id}/open`);
             await new Promise(resolve => setTimeout(resolve, 500));
         } catch (error) {
             console.error("Erro simulado da API:", error);
         } finally {
             setLoading(false);
-            // Fecha e volta imediatamente para a tela anterior do app
-            router.back();
+            
+            // 1. Recurso Nativo: Redireciona substituindo a rota atual da pilha (Evita histórico de volta)
+            // 2. Passa os parâmetros de controle para a tela de destino acionar o Haptics e a Animação
+            router.replace({
+                pathname: '/cards/[id]',
+                params: { 
+                    id: '1', // ID dinâmico ou fixo do cartão para o MVP
+                    recebendoSelo: 'true' 
+                }
+            });
         }
     };
 
     return (
         <View style={styles.container}>
-            {/* Corpo da tela limpo contendo apenas o modelo 3D */}
             <View style={styles.view3D}>
                 <Pack3D isAnimatingOpen={loading} />
             </View>
 
-            {/* Botão inferior único para gatilho */}
             <TouchableOpacity 
                 style={[styles.openButton, loading && styles.disabledButton]} 
                 onPress={handleOpenSequence}
@@ -102,7 +100,7 @@ const styles = StyleSheet.create({
     },
     openButton: { 
         marginHorizontal: 24, 
-        backgroundColor: '#FFD000', // Destaque oficial do DS
+        backgroundColor: '#FFD000', 
         padding: 20, 
         borderRadius: 14, 
         alignItems: 'center',

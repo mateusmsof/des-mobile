@@ -14,7 +14,10 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSCameraUsageDescription": "Este aplicativo precisa de acesso à câmera para escanear os QR Codes dos cartões fidelidade."
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -23,7 +26,8 @@
       },
       "edgeToEdgeEnabled": true,
       "permissions": [
-        "VIBRATE"
+        "VIBRATE",
+        "CAMERA"
       ],
       "predictiveBackGestureEnabled": false
     },
@@ -34,7 +38,15 @@
     },
     "plugins": [
       "expo-router",
-      "expo-asset"
+      "expo-asset",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Permita o acesso à câmera para que possamos validar os seus selos de fidelidade.",
+          "microphonePermission": false,
+          "recordAudioAndroid": false
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true

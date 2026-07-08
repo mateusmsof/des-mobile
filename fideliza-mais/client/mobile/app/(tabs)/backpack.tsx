@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, StatusBar, Dimensions, ViewStyle, TextStyle } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, StatusBar, Dimensions, ViewStyle, TextStyle, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 
 // Interface estruturada conforme o modelo da tabela tb_stamp_packs
@@ -15,6 +15,10 @@ const PACKS: StampPackGroup[] = [
   { id: '2', storeName: 'Panificadora Japão', count: 1 },
   { id: '3', storeName: 'Burguer House', count: 5 },
   { id: '4', storeName: 'Café Central', count: 2 },
+  { id: '5', storeName: 'Pausa & Sabor', count: 3 },
+  { id: '6', storeName: 'Panificadora Japão', count: 1 },
+  { id: '7', storeName: 'Burguer House', count: 5 },
+  { id: '8', storeName: 'Café Central', count: 2 },
 ];
 
 // Cálculo para garantir que os cards fiquem simétricos independente do tamanho da tela
@@ -28,13 +32,7 @@ export default function BackpackScreen() {
   return (
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#F2F4F7" />
-      
-      {/* CABEÇALHO CONTEXTUALIZADO */}
-      <View style={styles.headerGroup}>
-        <Text style={styles.pageTitle}>Minha Mochila</Text>
-        <Text style={styles.subtitle}>Inventário de pacotes selados de selos</Text>
-      </View>
-      
+
       <FlatList
         data={PACKS}
         numColumns={2} // Transforma a lista em uma grade/grid estilo inventário de jogo
@@ -49,17 +47,18 @@ export default function BackpackScreen() {
           </View>
         }
         renderItem={({ item }) => (
-          <TouchableOpacity 
-            style={styles.packCard} 
+          <TouchableOpacity
+            style={styles.packCard}
             activeOpacity={0.8}
             onPress={() => router.push(`/packs/${item.id}`)}
           >
-            {/* ÁREA VISUAL CENTRALIZADA DO CARD */}
+            {/* ÁREA VISUAL CENTRALIZADA DO CARD COM A IMAGEM */}
             <View style={styles.cardVisual}>
-              <View style={styles.itemIconWrapper}>
-                {/* Letra ou ícone do item do jogo/plataforma */}
-                <Text style={styles.iconLetter}>{item.storeName.charAt(0).toUpperCase()}</Text>
-              </View>
+              <Image
+                source={require('../../assets/images/pack.webp')}
+                style={styles.packImage}
+                resizeMode="contain"
+              />
             </View>
 
             {/* INFORMAÇÕES DO ESTABELECIMENTO */}
@@ -82,13 +81,11 @@ export default function BackpackScreen() {
 // Tipagem explícita dos objetos para evitar inferências incorretas de CSS Web/Mobile no TS
 interface Styles {
   container: ViewStyle;
-  headerGroup: ViewStyle;
-  pageTitle: TextStyle;
-  subtitle: TextStyle;
   listContent: ViewStyle;
   columnWrapper: ViewStyle;
   packCard: ViewStyle;
   cardVisual: ViewStyle;
+  packImage: import('react-native').ImageStyle; // Alterado para ImageStyle
   itemIconWrapper: ViewStyle;
   iconLetter: TextStyle;
   cardInfo: ViewStyle;
@@ -101,52 +98,36 @@ interface Styles {
 }
 
 const styles = StyleSheet.create<Styles>({
-  container: { 
-    flex: 1, 
-    backgroundColor: '#F2F4F7' 
+  container: {
+    flex: 1,
+    backgroundColor: '#F2F4F7'
   },
-  headerGroup: {
+  listContent: {
     paddingHorizontal: 20,
-    paddingTop: 24,
-    paddingBottom: 16,
-  },
-  pageTitle: { 
-    fontSize: 26, 
-    fontWeight: '700', 
-    color: '#333C48', 
-    fontFamily: 'Poppins-Bold' 
-  },
-  subtitle: {
-    fontSize: 13,
-    color: '#717d8a',
-    fontFamily: 'Poppins-Regular',
-    marginTop: 2
-  },
-  listContent: { 
-    paddingHorizontal: 20,
-    paddingBottom: 24 
+    paddingBottom: 24,
+    paddingTop: 24
   },
   columnWrapper: {
     justifyContent: 'flex-start',
     gap: CARD_MARGIN * 2
   },
   /* CARD EM FORMATO DE GRADE DE INVENTÁRIO */
-  packCard: { 
-    backgroundColor: '#FFFFFF', 
+  packCard: {
+    backgroundColor: '#FFFFFF',
     width: CARD_WIDTH,
-    height: CARD_WIDTH * 1.15,
-    borderRadius: 14, 
+    height: CARD_WIDTH * 1.25, // Aumentado levemente para acomodar a imagem
+    borderRadius: 14,
     marginBottom: 20,
     borderWidth: 1,
     borderColor: '#C7D0D8',
     padding: 12,
     alignItems: 'center',
-    justifyContent: 'space-between', // Corrigido de 'between' para 'space-between'
+    justifyContent: 'space-between',
     position: 'relative',
-    shadowColor: '#333C48', 
-    shadowOffset: { width: 0, height: 4 }, 
-    shadowOpacity: 0.03, 
-    shadowRadius: 6, 
+    shadowColor: '#333C48',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.03,
+    shadowRadius: 6,
     elevation: 2
   },
   cardVisual: {
@@ -154,12 +135,17 @@ const styles = StyleSheet.create<Styles>({
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
+    padding: 8, // Espaçamento extra para a imagem não tocar as bordas
   },
-  itemIconWrapper: { 
-    width: 64, 
-    height: 64, 
-    backgroundColor: 'rgba(34, 124, 157, 0.08)', 
-    borderRadius: 12, 
+  packImage: {
+    width: '85%',  // Ocupa a maior parte do espaço mantendo respiro
+    height: '85%', // Ocupa a maior parte do espaço mantendo respiro
+  },
+  itemIconWrapper: {
+    width: 64,
+    height: 64,
+    backgroundColor: 'rgba(34, 124, 157, 0.08)',
+    borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
@@ -171,22 +157,22 @@ const styles = StyleSheet.create<Styles>({
     color: '#227C9D',
     fontFamily: 'Poppins-Bold'
   },
-  cardInfo: { 
+  cardInfo: {
     width: '100%',
     alignItems: 'center',
     paddingTop: 8,
     borderTopWidth: 1,
     borderTopColor: '#F2F4F7'
   },
-  storeNameText: { 
-    fontSize: 14, 
-    fontWeight: '700', 
-    color: '#333C48', 
+  storeNameText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#333C48',
     fontFamily: 'Poppins-Bold',
     textAlign: 'center'
   },
   /* BADGE DE QUANTIDADE DO INVENTÁRIO */
-  qtyBadge: { 
+  qtyBadge: {
     position: 'absolute',
     top: 10,
     right: 10,
@@ -202,11 +188,11 @@ const styles = StyleSheet.create<Styles>({
     shadowRadius: 2,
     elevation: 1
   },
-  qtyText: { 
-    fontWeight: '700', 
-    color: '#333C48', 
-    fontSize: 11, 
-    fontFamily: 'Poppins-Bold' 
+  qtyText: {
+    fontWeight: '700',
+    color: '#333C48',
+    fontSize: 11,
+    fontFamily: 'Poppins-Bold'
   },
   emptyContainer: {
     flex: 1,
