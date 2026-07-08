@@ -17,6 +17,7 @@ exports.listPacksByCustomer = async (customerId) => {
     JOIN tb_loyalty_card_templates tpl ON tpl.id = lc.template_id
     JOIN tb_stores str ON str.id = tpl.store_id
     WHERE lc.customer_id = ?
+      AND p.status = 'sealed'
     ORDER BY p.created_at DESC
   `, [customerId]);
 

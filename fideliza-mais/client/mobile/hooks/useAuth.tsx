@@ -3,7 +3,7 @@ import { useRouter, useSegments } from 'expo-router';
 import * as SecureStore from 'expo-secure-store';
 
 const AUTH_TOKEN_KEY = 'fideliza_auth_token';
-const DEMO_MODE = true;
+const API_BASE_URL = 'https://ubiquitous-spork-wjpgvqqxqjj2w79-3000.app.github.dev/api';
 
 type AuthStatus = 'loading' | 'authenticated' | 'unauthenticated';
 
@@ -13,8 +13,8 @@ type AuthContextValue = {
   isAuthenticated: boolean;
   signIn: (token: string) => Promise<void>;
   signOut: () => Promise<void>;
-  requestOtp: (email: string) => Promise<{ success: boolean; message: string; usedDemo: boolean }>;
-  verifyOtp: (email: string, code: string) => Promise<{ success: boolean; message: string; usedDemo: boolean; token?: string }>;
+  requestOtp: (email: string) => Promise<{ success: boolean }>;
+  verifyOtp: (email: string, code: string) => Promise<{ success: boolean; token?: string }>;
 };
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -92,18 +92,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       throw new Error('Informe um e-mail para continuar.');
     }
 
-    if (DEMO_MODE) {
-      return {
-        success: true,
-        message: 'Use qualquer e-mail e o código 123456 para continuar.',
-        usedDemo: true,
-      };
+    const response = await fetch(`${API_BASE_URL}/auth/otp`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email: normalizedEmail }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Não foi possível enviar o código.');
     }
 
     return {
       success: true,
-      message: 'Código enviado com sucesso.',
-      usedDemo: false,
     };
   };
 
@@ -115,28 +119,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       throw new Error('Informe o código recebido por e-mail.');
     }
 
-    if (DEMO_MODE && normalizedCode === '123456') {
-      const token = `demo-${normalizedEmail}-${normalizedCode}`;
-      await signIn(token);
-      return {
-        success: true,
-        message: 'Login realizado com sucesso.',
-        usedDemo: true,
-        token,
-      };
+    const response = await fetch(`${API_BASE_URL}/auth/verify`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email: normalizedEmail, code: normalizedCode }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Não foi possível validar o código.');
     }
 
-    if (DEMO_MODE) {
-      throw new Error('No modo demonstração, use o código 123456.');
+    if (!data.token) {
+      throw new Error('Token não recebido do servidor.');
     }
 
-    const token = `demo-${normalizedEmail}-${normalizedCode}`;
-    await signIn(token);
+    await signIn(data.token);
+
     return {
       success: true,
-      message: 'Login realizado com sucesso.',
-      usedDemo: false,
-      token,
+      token: data.token,
     };
   };
 

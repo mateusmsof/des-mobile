@@ -35,3 +35,53 @@ AppError: Token inválido ou expirado.
     at router.handle (/workspaces/des-mobile/fideliza-mais/api/node_modules/router/index.js:186:3) {
   statusCode: 401
 }
+AppError: Token inválido ou expirado.
+    at module.exports (/workspaces/des-mobile/fideliza-mais/api/middleware/auth.js:31:17)
+    at Layer.handleRequest (/workspaces/des-mobile/fideliza-mais/api/node_modules/router/lib/layer.js:152:17)
+    at next (/workspaces/des-mobile/fideliza-mais/api/node_modules/router/lib/route.js:157:13)
+    at Route.dispatch (/workspaces/des-mobile/fideliza-mais/api/node_modules/router/lib/route.js:117:3)
+    at handle (/workspaces/des-mobile/fideliza-mais/api/node_modules/router/index.js:435:11)
+    at Layer.handleRequest (/workspaces/des-mobile/fideliza-mais/api/node_modules/router/lib/layer.js:152:17)
+    at /workspaces/des-mobile/fideliza-mais/api/node_modules/router/index.js:295:15
+    at processParams (/workspaces/des-mobile/fideliza-mais/api/node_modules/router/index.js:582:12)
+    at next (/workspaces/des-mobile/fideliza-mais/api/node_modules/router/index.js:291:5)
+    at router.handle (/workspaces/des-mobile/fideliza-mais/api/node_modules/router/index.js:186:3) {
+  statusCode: 401
+}
+AppError: Código inválido ou expirado.
+    at exports.verifyOTP (/workspaces/des-mobile/fideliza-mais/api/features/otp/otp.service.js:47:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async /workspaces/des-mobile/fideliza-mais/api/features/auth/auth.controller.js:24:2 {
+  statusCode: 401
+}
+AppError: Código inválido ou expirado.
+    at exports.verifyOTP (/workspaces/des-mobile/fideliza-mais/api/features/otp/otp.service.js:47:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async /workspaces/des-mobile/fideliza-mais/api/features/auth/auth.controller.js:24:2 {
+  statusCode: 401
+}
+AppError: Código inválido ou expirado.
+    at exports.verifyOTP (/workspaces/des-mobile/fideliza-mais/api/features/otp/otp.service.js:47:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async /workspaces/des-mobile/fideliza-mais/api/features/auth/auth.controller.js:24:2 {
+  statusCode: 401
+}
+AppError: Rota /auth/otp não encontrada.
+    at /workspaces/des-mobile/fideliza-mais/api/index.js:17:8
+    at Layer.handleRequest (/workspaces/des-mobile/fideliza-mais/api/node_modules/router/lib/layer.js:152:17)
+    at trimPrefix (/workspaces/des-mobile/fideliza-mais/api/node_modules/router/index.js:342:13)
+    at /workspaces/des-mobile/fideliza-mais/api/node_modules/router/index.js:297:9
+    at processParams (/workspaces/des-mobile/fideliza-mais/api/node_modules/router/index.js:582:12)
+    at next (/workspaces/des-mobile/fideliza-mais/api/node_modules/router/index.js:291:5)
+    at read (/workspaces/des-mobile/fideliza-mais/api/node_modules/body-parser/lib/read.js:42:5)
+    at urlencodedParser (/workspaces/des-mobile/fideliza-mais/api/node_modules/body-parser/lib/types/urlencoded.js:51:5)
+    at Layer.handleRequest (/workspaces/des-mobile/fideliza-mais/api/node_modules/router/lib/layer.js:152:17)
+    at trimPrefix (/workspaces/des-mobile/fideliza-mais/api/node_modules/router/index.js:342:13) {
+  statusCode: 404
+}
+AppError: Código inválido ou expirado.
+    at exports.verifyOTP (/workspaces/des-mobile/fideliza-mais/api/features/otp/otp.service.js:47:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async /workspaces/des-mobile/fideliza-mais/api/features/auth/auth.controller.js:24:2 {
+  statusCode: 401
+}

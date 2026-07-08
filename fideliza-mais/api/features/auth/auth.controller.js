@@ -6,11 +6,24 @@ const AppError = require('../../common/AppError');
 exports.sendOtp = catchAsync(async (req, res) => {
 	const { email, type } = req.body;
 
+	console.log('AUTH SEND OTP REQUEST', {
+		email,
+		type,
+		body: req.body,
+		headers: req.headers,
+	});
+
 	if (!email || typeof email !== 'string') {
 		throw new AppError('E-mail é obrigatório.', 400);
 	}
 
 	const result = await otpService.sendOTP(email, type);
+
+	console.log('AUTH SEND OTP RESULT', {
+		message: result.message,
+		email: email.trim().toLowerCase(),
+	});
+
 	res.status(200).json({ success: 'success', message: result.message });
 });
 

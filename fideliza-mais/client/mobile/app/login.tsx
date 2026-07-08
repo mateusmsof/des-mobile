@@ -18,8 +18,7 @@ export default function LoginScreen() {
     setIsSubmitting(true);
 
     try {
-      const result = await requestOtp(email);
-      Alert.alert('OTP', result.message);
+      await requestOtp(email);
       setShowOtpModal(true);
     } catch (error) {
       Alert.alert('Login', error instanceof Error ? error.message : 'Não foi possível enviar o código.');
@@ -37,12 +36,9 @@ export default function LoginScreen() {
     setIsSubmitting(true);
 
     try {
-      const result = await verifyOtp(email, otpCode);
-      Alert.alert('Login', result.message);
-      if (result.success) {
-        setShowOtpModal(false);
-        setOtpCode('');
-      }
+      await verifyOtp(email, otpCode);
+      setShowOtpModal(false);
+      setOtpCode('');
     } catch (error) {
       Alert.alert('Login', error instanceof Error ? error.message : 'Não foi possível validar o código.');
     } finally {
