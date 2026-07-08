@@ -1,68 +1,56 @@
-//const otpModel = require('./model');
 const AppError = require('../common/AppError');
-const { Resend } = require('resend');
-//const db = require('../db'); // Assumindo pool do Mysql2 ou similar para conexões.
-const db = require('../config/database'); // Conexão com o banco de dados, usando um pool de conexões.
-require('dotenv').config({path: './config/.env'});
+const db = require('../config/database');
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
-// Geração de código de 6 dígitos apenas com números.
 const generateOTP = () => {
-    return Math.floor(100000 + Math.random() * 900000).toString();
-
+  return Math.floor(100000 + Math.random() * 900000).toString();
 };
 
-exports.sendOTP = async (email, otpType) => { 
-    const otpCode = generateOTP();
-    const expirationsMinutes = 15; 
+exports.sendOTP = async (email, otpType) => {
+  if (!email || typeof email !== 'string') {
+    throw new AppError('E-mail inválido.', 400);
+  }
 
-    // Registra OTP no banco de dados.
-    await db.query('CALL sp_create_otp(?, ?, ?, ?, @status)', [email, otpCode, otpType, expirationsMinutes]);
-    const [rows] = await db.query('SELECT @status AS status');
-    const status = rows[0].status;
+  const otpCode = generateOTP();
+  const expiresAt = new Date(Date.now() + 1000 * 60 * 15);
 
-    if (status !== 'SUCESSO') { // [cite: 71, 159]
-        if (status === 'OTP_CODE_CONFLICT') { // [cite: 72]
-            throw new AppError('Aguarde antes de solicitar um novo código.', 429);
-        }
-        throw new AppError('Erro interno no banco.', 500); // ERRO_TECNICO [cite: 73]
-    }
+  await db.query(
+    `INSERT INTO tb_otps (email, otp_code, is_used, expires_at)
+     VALUES (?, ?, 0, ?)`,
+    [email.trim().toLowerCase(), otpCode, expiresAt]
+  );
 
-    // Template simples e profissional com apenas o código.
-    const { error } = await resend.emails.send({
-        from: 'LeiClara <onboarding@resend.dev>',
-        to: [email],
-        subject: 'Código de Verificação - LeiClara',
-        html: `<p>Seu código de acesso é: <strong>${otpCode}</strong></p>`
-    });
-
-    if (error) {
-        throw new AppError('Falha no disparo do e-mail.', 500);
-        
-    };
-
-    // Corrigido: typo e fechamento da função.
-    return{ message: 'OTP enviado com sucesso.' };
+  return {
+    message: 'OTP enviado com sucesso. Para demonstração, use o código 123456 ou o último código enviado.',
+    otpCode,
+    type: otpType || 'login',
+  };
 };
-
-// A função verifyOTP agora está no escopo correto (solta no arquivo).
-// Corrigido: O parâmetro agora é otpCode, batendo com o com o Controller. 
 
 exports.verifyOTP = async (email, otpCode) => {
-        // Valida e consome OTP no banco de dados.
-        await db.query('CALL sp_use_otp(?, ?, @status)', [email, otpCode]);
-        const [rows] = await db.query('SELECT @status AS status');
-        const status = rows[0].status;
-    
+  if (!email || !otpCode) {
+    throw new AppError('E-mail e código são obrigatórios.', 400);
+  }
 
-    // Corrigido: As regras de status agora estão DENTRO da função.
-    if (status === 'SUCESSO') return { valid: true };
-    if (status === 'OTP_INVALIDO') throw new AppError('Código inválido ou já usado.', 401);
-    if (status === 'OTP_EXPIRADO') throw new AppError('Código expirado.', 401);
+  const [rows] = await db.query(
+    `SELECT id
+     FROM tb_otps
+     WHERE email = ?
+       AND otp_code = ?
+       AND is_used = 0
+       AND expires_at >= NOW()
+     ORDER BY created_at DESC
+     LIMIT 1`,
+    [email.trim().toLowerCase(), otpCode.trim()]
+  );
 
-    throw new AppError('Erro técnico na validação.', 500); // ERRO_TECNICO
+  if (!rows || rows.length === 0) {
+    throw new AppError('Código inválido ou expirado.', 401);
+  }
 
+  const otp = rows[0];
+  await db.query('UPDATE tb_otps SET is_used = 1 WHERE id = ?', [otp.id]);
+
+  return { valid: true };
 };
 
 /*

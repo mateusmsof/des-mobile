@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Tabs } from 'expo-router';
-import { Pressable, View, StyleSheet } from 'react-native';
+import { Pressable, View, StyleSheet, Alert } from 'react-native';
 
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import { useClientOnlyValue } from '@/components/useClientOnlyValue';
+import { useAuth } from '@/hooks/useAuth';
 import ValidarSelo from '../../components/ui/ValidarSelo';
 
 const PRIMARY_COLOR = '#227C9D';
@@ -20,6 +21,20 @@ function TabBarIcon(props: {
 export default function TabLayout() {
   const colorScheme = useColorScheme();
   const [modalVisible, setModalVisible] = useState(false);
+  const { signOut } = useAuth();
+
+  const handleLogout = () => {
+    Alert.alert('Sair', 'Deseja encerrar sua sessão?', [
+      { text: 'Cancelar', style: 'cancel' },
+      {
+        text: 'Sair',
+        style: 'destructive',
+        onPress: async () => {
+          await signOut();
+        },
+      },
+    ]);
+  };
 
   return (
     <>
@@ -38,6 +53,11 @@ export default function TabLayout() {
           options={{
             title: 'Cartões',
             tabBarIcon: ({ color }) => <TabBarIcon name="gift" color={color} />,
+            headerRight: () => (
+              <Pressable onPress={handleLogout} style={styles.headerButton}>
+                <FontAwesome name="sign-out" size={18} color={PRIMARY_COLOR} />
+              </Pressable>
+            ),
           }}
         />
         <Tabs.Screen
@@ -45,6 +65,11 @@ export default function TabLayout() {
           options={{
             title: 'Mochila',
             tabBarIcon: ({ color }) => <TabBarIcon name="briefcase" color={color} />,
+            headerRight: () => (
+              <Pressable onPress={handleLogout} style={styles.headerButton}>
+                <FontAwesome name="sign-out" size={18} color={PRIMARY_COLOR} />
+              </Pressable>
+            ),
           }}
         />
       </Tabs>
@@ -93,5 +118,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 8,
+  },
+  headerButton: {
+    marginRight: 12,
+    paddingHorizontal: 4,
+    paddingVertical: 4,
   },
 });

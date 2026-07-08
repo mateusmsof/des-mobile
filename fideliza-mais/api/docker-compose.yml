@@ -1,0 +1,23 @@
+version: '3.9'
+services:
+  db:
+    image: mysql:8.0
+    container_name: fideliza_mais_db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: fideliza_mais
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+    ports:
+      - '3306:3306'
+    volumes:
+      - mysql_data_fideliza_mais:/var/lib/mysql
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ['CMD', 'mysqladmin', 'ping', '--silent']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  mysql_data_fideliza_mais:

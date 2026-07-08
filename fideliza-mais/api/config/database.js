@@ -1,15 +1,15 @@
 const path = require('path');
-require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 
 const mysql = require('mysql2/promise');
 
 // Cria a conexão
 const dbconn = mysql.createPool({
-    host: process.env.MYSQL_ADDON_HOST || 'localhost',
-    port: process.env.MYSQL_ADDON_PORT || 3306,
-    user: process.env.MYSQL_ADDON_USER || 'root',
-    password: process.env.MYSQL_ADDON_PASSWORD || '',
-    database: process.env.MYSQL_ADDON_DB || 'bwm2wcj6zndyhngec7mt',
+    host: process.env.MYSQL_HOST || 'localhost',
+    port: process.env.MYSQL_PORT || 3306,
+    user: process.env.MYSQL_USER || 'root',
+    password: process.env.MYSQL_PASSWORD || '',
+    database: process.env.MYSQL_DB || 'fideliza_mais',
     multipleStatements: true
 });
 
