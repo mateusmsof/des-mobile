@@ -11,9 +11,10 @@ const ModalCodigo = ({ voucher, aoFechar }) => {
 
   useEffect(() => {
     const gerarQRCode = async () => {
-      if (voucher && voucher.codigo && canvasRef.current) {
+      // Ajustado para ler a propriedade correta retornada pela API (voucherCode)
+      if (voucher && voucher.voucherCode && canvasRef.current) {
         try {
-          await QRCode.toCanvas(canvasRef.current, voucher.codigo, {
+          await QRCode.toCanvas(canvasRef.current, voucher.voucherCode, {
             width: 220,
             margin: 1,
             color: {
@@ -45,7 +46,7 @@ const ModalCodigo = ({ voucher, aoFechar }) => {
         </div>
     
         <div className="op-manual-code">
-          {voucher?.codigo || '---'}
+          {voucher?.voucherCode || '---'}
         </div>
     
         <button className="op-btn-modal-continue" onClick={aoFechar}>Continuar</button>
@@ -59,18 +60,44 @@ const ModalCodigo = ({ voucher, aoFechar }) => {
 // ==========================================
 const GerarSelosForm = ({ aoFinalizar }) => {
   const [valorCompra, setValorCompra] = useState('');
+  const [carregando, setCarregando] = useState(false);
+  const [erro, setErro] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const mockCodigoVoucher = Math.random().toString(36).substring(2, 8).toUpperCase();
-    
-    aoFinalizar({
-      sucesso: true,
-      dados: {
-        codigo: mockCodigoVoucher,
-        valor: valorCompra
+    setCarregando(true);
+    setErro('');
+
+    // ID da loja padrão definido com base no seed de demonstração do seu banco
+    const storeId = 1;
+
+    try {
+      const resposta = await fetch(`https://ubiquitous-spork-wjpgvqqxqjj2w79-3000.app.github.dev/api/stores/${storeId}/vouchers`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          valor: valorCompra // Caso precise enviar o valor de compra para logs futuros
+        })
+      });
+
+      const resultado = await resposta.json();
+
+      if (resposta.ok && resultado.success === 'success') {
+        aoFinalizar({
+          sucesso: true,
+          dados: resultado.data // Passa o objeto do voucher retornado pela API
+        });
+      } else {
+        setErro(resultado.message || 'Falha ao emitir voucher.');
       }
-    });
+    } catch (err) {
+      console.error('Erro ao conectar com a API:', err);
+      setErro('Erro de rede ao conectar com o servidor.');
+    } finally {
+      setCarregando(false);
+    }
   };
 
   return (
@@ -85,10 +112,14 @@ const GerarSelosForm = ({ aoFinalizar }) => {
           value={valorCompra}
           onChange={(e) => setValorCompra(e.target.value)}
           className="op-input-valor"
+          disabled={carregando}
         />
       </div>
-      <button type="submit" className="op-btn-submit-emissao">
-        Emitir Selos
+      
+      {erro && <div style={{ color: '#ef4444', marginBottom: '1rem', fontSize: '0.875rem' }}>{erro}</div>}
+
+      <button type="submit" className="op-btn-submit-emissao" disabled={carregando}>
+        {carregando ? 'Emitindo...' : 'Emitir Selos'}
       </button>
     </form>
   );
@@ -100,7 +131,6 @@ const GerarSelosForm = ({ aoFinalizar }) => {
 export default function Operational() {
   const [exibirCodigo, setExibirCodigo] = useState(false);
   const [dadosVoucher, setDadosVoucher] = useState(null);
-  // Estado adicionado para servir de identificador único e limpar o formulário
   const [formResetKey, setFormResetKey] = useState(0);
   const navigate = useNavigate();
 
@@ -114,7 +144,6 @@ export default function Operational() {
   const handleFecharModal = () => {
     setExibirCodigo(false);
     setDadosVoucher(null);
-    // Incrementa o número identificador para destruir e recriar o formulário com o campo limpo
     setFormResetKey(prev => prev + 1);
   };
 
@@ -131,7 +160,6 @@ export default function Operational() {
         ←
       </button>
 
-      {/* A propriedade key força a limpeza do estado interno do input assim que o valor dela muda */}
       <GerarSelosForm key={formResetKey} aoFinalizar={handleVoucherGerado} />
 
       {exibirCodigo && (

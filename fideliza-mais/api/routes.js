@@ -19,7 +19,11 @@ router.get('/me/packs', authMiddleware, packsController.listMyPacks);
 router.get('/packs/:id', authMiddleware, packsController.getPackDetail);
 router.post('/packs/:id/open', authMiddleware, packsController.openPack);
 
-router.post('/stores/:storeId/vouchers', authMiddleware, vouchersController.createVoucher);
+// Rota de emissão: pública (Sem autenticação)
+router.post('/stores/:storeId/vouchers', vouchersController.createVoucher);
+
+// Nova Rota de consumo: privada (Requer autenticação do cliente)
+router.post('/vouchers/consume', authMiddleware, vouchersController.consumeVoucher);
 
 router.post('/modals', authMiddleware, modalsController.createModal);
 router.get('/modals/active', modalsController.listActiveModals);

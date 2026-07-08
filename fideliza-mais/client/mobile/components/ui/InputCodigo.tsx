@@ -8,7 +8,8 @@ interface InputCodigoProps {
 
 export default function InputCodigo({ codigoValido, primaryColor = '#227C9D' }: InputCodigoProps) {
   const [codigoCompleto, setCodigoCompleto] = useState('');
-  const TAMANHO_MAXIMO = 7;
+  // Ajustado de 7 para 6 para corresponder ao padrão CHAR(6) da API
+  const TAMANHO_MAXIMO = 6;
   
   // Referência nativa para controlar o elemento de Input de Texto e abrir o teclado
   const inputRef = useRef<TextInput>(null);
@@ -26,7 +27,7 @@ export default function InputCodigo({ codigoValido, primaryColor = '#227C9D' }: 
     inputRef.current?.focus();
   };
 
-  // Transforma o texto corrido em um array fixo de 7 posições (Igual ao getter do Angular)
+  // Transforma o texto corrido em um array fixo de 6 posições
   const renderDigitosVisuais = () => {
     const digitos = codigoCompleto.split('');
     const caixas = [];

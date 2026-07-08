@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import { Modal, Pressable, View, StyleSheet, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 
+// AJUSTE O CAMINHO DA IMPORTAÇÃO ABAIXO DE ACORDO COM A SUA ESTRUTURA DE PASTAS
+import { useAuth } from '../../hooks/useAuth';
+
 // Importações dos futuros subcomponentes da pasta UI
 import ScannerCodigo from './ScannerCodigo';
 import InputCodigo from './InputCodigo';
-// Se decidir criar o feedback como componente isolado posteriormente:
-// import ResultadoFeedback from './ui/ResultadoFeedback';
 
 interface ValidarSeloProps {
   visible: boolean;
@@ -29,6 +30,9 @@ export default function ValidarSelo({
   onCodigoConfirmado 
 }: ValidarSeloProps) {
   
+  // Consumo do contexto de autenticação para extrair o token atualizado
+  const { token } = useAuth();
+
   // Estados replicando a lógica dos Signals do Angular
   const [modo, setModo] = useState<'qr' | 'manual'>('qr');
   const [loading, setLoading] = useState(false);
@@ -67,54 +71,40 @@ export default function ValidarSelo({
   const processarEValidar = async (valor: string) => {
     if (!valor) return;
 
-    const prefixo = valor.charAt(0).toUpperCase();
-    const codigoLimpo = valor.substring(1);
+    // Normaliza o código para maiúsculo e sem espaços, compatível com o banco da API
+    const codigoLimpo = valor.trim().toUpperCase();
     
-    let endpoint = '';
-    let tituloSucesso = '';
+    // Rota da nossa API para consumo do voucher de selo
+    const endpoint = 'https://ubiquitous-spork-wjpgvqqxqjj2w79-3000.app.github.dev/api/vouchers/consume';
 
-    if (prefixo === 'P') {
-      endpoint = 'http://localhost:3000/vouchers/pontos/validar';
-      tituloSucesso = 'Pontos Creditados!';
-    } else if (prefixo === 'R') {
-      endpoint = 'http://localhost:3000/vouchers/recompensas/validar';
-      tituloSucesso = 'Resgate Confirmado!';
-    } else {
-      exibirFeedback('erro', 'Prefixo Inválido', 'O código lido não pertence ao nosso sistema.');
-      return;
-    }
-
+    // Payload esperado pelo vouchers.controller ajustado
     const payload = {
-      codigo: codigoLimpo,
-      idCliente: 'f012602b-fbf2-11f0-9d6b-cecd02c24f20' // ID fixo do MVP
+      voucherCode: codigoLimpo
     };
 
     try {
       setLoading(true);
-      console.log(`🚀 Validando no Ecossistema (${prefixo}):`, payload);
+      console.log(`🚀 Consumindo Voucher na API com Autenticação:`, payload);
 
       const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          // Injeta dinamicamente o token recuperado do SecureStore pelo AuthProvider
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify(payload)
       });
 
       const res = await response.json();
 
-      if (response.ok) {
-        const resultadoFinal = res?.resultado || 'ERRO_DESCONHECIDO';
-
-        if (resultadoFinal === 'SUCESSO') {
-          exibirFeedback('sucesso', tituloSucesso, 'A transação foi processada com sucesso.');
-          if (onCodigoConfirmado) onCodigoConfirmado(res);
-        } else {
-          exibirFeedback('aviso', 'Atenção', resultadoFinal.replace(/_/g, ' '));
-        }
+      if (response.ok && res.success === 'success') {
+        exibirFeedback('sucesso', 'Selo Creditado!', 'O voucher foi validado e seu pacote de selos foi gerado.');
+        if (onCodigoConfirmado) onCodigoConfirmado(res.data);
       } else {
-        const mensagemErro = res?.erro || res?.resultado || 'FALHA_NA_COMUNICACAO';
-        exibirFeedback('erro', 'Falha na Validação', String(mensagemErro).replace(/_/g, ' '));
+        // Trata a estrutura de erro enviada pelo AppError da nossa API
+        const mensagemErro = res?.message || 'Não foi possível validar este voucher.';
+        exibirFeedback('erro', 'Falha na Validação', mensagemErro);
       }
     } catch (err) {
       console.error('❌ Erro de comunicação com o servidor:', err);
@@ -208,6 +198,7 @@ export default function ValidarSelo({
     </Modal>
   );
 }
+
 
 const styles = StyleSheet.create({
   modalScreenOverlay: {
